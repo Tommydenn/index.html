@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Signature Generator</title>
+    <!-- Import Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles (won't be copied into the email signature) */
+        body {
+            font-family: 'Source Serif Pro', serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1, h3 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #003C4C;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+        }
+        .form-container, .preview-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box; /* Include padding in width calculation */
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .form-container, .preview-container {
+                width: 48%; /* Ensure both take up equal horizontal space */
+                margin-bottom: 0;
+            }
+            .flex-container {
+                flex-wrap: nowrap; /* Prevent wrapping on larger screens */
+            }
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #003C4C;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Source Serif Pro', serif;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            border-color: #007098;
+            outline: none;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #007098;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            font-family: 'Source Serif Pro', serif;
+        }
+        .btn:hover {
+            background-color: #005f7a;
+        }
+        .email-signature {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            color: #003C4C;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Email Signature Generator</h1>
+    <div class="flex-container">
+        <div class="form-container">
+            <h3>Your Details</h3>
+            <form id="signatureForm">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" oninput="updatePreview()">
+
+                <label for="jobTitle">Job Title</label>
+                <input type="text" id="jobTitle" name="jobTitle" oninput="updatePreview()">
+
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" oninput="updatePreview()">
+
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" oninput="updatePreview()">
+
+                <!-- Removed the Generate Signature button -->
+            </form>
+        </div>
+
+        <div class="preview-container">
+            <h3>Signature Preview</h3>
+            <div id="signaturePreview" class="email-signature">
+                <!-- Signature will be generated here -->
+            </div>
+            <button class="btn" onclick="copyFormattedSignature()">Copy Signature</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatPhoneNumber(phone) {
+        const cleaned = ('' + phone).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        if (match) {
+            return match[1] + '-' + match[2] + '-' + match[3];
+        }
+        return phone;
+    }
+
+    function updatePreview() {
+        const name = document.getElementById('name').value.trim();
+        const jobTitle = document.getElementById('jobTitle').value.trim();
+        const phoneInput = document.getElementById('phone').value.trim();
+        const phone = formatPhoneNumber(phoneInput);
+        const email = document.getElementById('email').value.trim();
+        const website = 'GreatLakesMC.com';
+        const address = '12755 Hwy 55 Suite 125, Plymouth, MN 55441';
+
+        let signatureHtml = '<table cellpadding="0" cellspacing="0" border="0" style="font-family:\'Roboto\', sans-serif; color:#003C4C;">';
+
+        if (name || jobTitle) {
+            signatureHtml += '<tr><td style="vertical-align: top;">';
+
+            if (name) {
+                signatureHtml += '<div style="font-size:17px; font-family:\'Roboto\', sans-serif; margin-bottom:5px;">' + name + '</div>';
+            }
+
+            if (jobTitle) {
+                signatureHtml += '<div style="font-size:13px; color:#007098; font-family:\'Roboto\', sans-serif; margin-bottom:5px;">' + jobTitle + '</div>';
+            }
+
+            signatureHtml += '<div style="font-size:13px; color:#003C4C; font-family:\'Roboto\', sans-serif;">Great Lakes Management Company</div>';
+
+            signatureHtml += '</td></tr>';
+        }
+
+        // Start of contact information
+        signatureHtml += '<tr><td style="padding-top:10px;">';
+        signatureHtml += '<table cellpadding="0" cellspacing="0" border="0">';
+
+        if (phone) {
+            signatureHtml += '<tr>';
+            signatureHtml += '<td style="padding:4px 0; vertical-align:top;">';
+            signatureHtml += '<table cellpadding="0" cellspacing="0" border="0">';
+            signatureHtml += '<tr>';
+            signatureHtml += '<td style="vertical-align:middle; padding-right:10px;">';
+            signatureHtml += '<img src="https://img.icons8.com/ios-filled/16/003C4C/phone.png" alt="Phone" style="display:block;">';
+            signatureHtml += '</td>';
+            signatureHtml += '<td style="vertical-align:middle;">';
+            signatureHtml += '<a href="tel:' + phoneInput + '" style="color: #003C4C; text-decoration:none; font-family:\'Roboto\', sans-serif; font-size:13px;">' + phone + '</a>';
+            signatureHtml += '</td>';
+            signatureHtml += '</tr>';
+            signatureHtml += '</table>';
+            signatureHtml += '</td>';
+            signatureHtml += '</tr>';
+        }
+
+        if (email) {
+            signatureHtml += '<tr>';
+            signatureHtml += '<td style="padding:4px 0; vertical-align:top;">';
+            signatureHtml += '<table cellpadding="0" cellspacing="0" border="0">';
+            signatureHtml += '<tr>';
+            signatureHtml += '<td style="vertical-align:middle; padding-right:10px;">';
+            signatureHtml += '<img src="https://img.icons8.com/ios-filled/16/003C4C/new-post.png" alt="Email" style="display:block;">';
+            signatureHtml += '</td>';
+            signatureHtml += '<td style="vertical-align:middle;">';
+            signatureHtml += '<a href="mailto:' + email + '" style="color: #003C4C; text-decoration:none; font-family:\'Roboto\', sans-serif; font-size:13px;">' + email + '</a>';
+            signatureHtml += '</td>';
+            signatureHtml += '</tr>';
+            signatureHtml += '</table>';
+            signatureHtml += '</td>';
+            signatureHtml += '</tr>';
+        }
+
+        // Add website (hardcoded)
+        signatureHtml += '<tr>';
+        signatureHtml += '<td style="padding:4px 0; vertical-align:top;">';
+        signatureHtml += '<table cellpadding="0" cellspacing="0" border="0">';
+        signatureHtml += '<tr>';
+        signatureHtml += '<td style="vertical-align:middle; padding-right:10px;">';
+        signatureHtml += '<img src="https://img.icons8.com/ios-filled/16/003C4C/domain.png" alt="Website" style="display:block;">';
+        signatureHtml += '</td>';
+        signatureHtml += '<td style="vertical-align:middle;">';
+        signatureHtml += '<a href="http://' + website + '" target="_blank" style="color: #003C4C; text-decoration:none; font-family:\'Roboto\', sans-serif; font-size:13px;">' + website + '</a>';
+        signatureHtml += '</td>';
+        signatureHtml += '</tr>';
+        signatureHtml += '</table>';
+        signatureHtml += '</td>';
+        signatureHtml += '</tr>';
+
+        // Add address (hardcoded)
+        signatureHtml += '<tr>';
+        signatureHtml += '<td style="padding:4px 0; vertical-align:top;">';
+        signatureHtml += '<table cellpadding="0" cellspacing="0" border="0">';
+        signatureHtml += '<tr>';
+        signatureHtml += '<td style="vertical-align:middle; padding-right:10px;">';
+        signatureHtml += '<img src="https://img.icons8.com/ios-filled/16/003C4C/marker.png" alt="Address" style="display:block;">';
+        signatureHtml += '</td>';
+        signatureHtml += '<td style="vertical-align:middle;">';
+        signatureHtml += '<span style="color: #003C4C; font-family:\'Roboto\', sans-serif; font-size:13px;">' + address + '</span>';
+        signatureHtml += '</td>';
+        signatureHtml += '</tr>';
+        signatureHtml += '</table>';
+        signatureHtml += '</td>';
+        signatureHtml += '</tr>';
+
+        signatureHtml += '</table>';
+        signatureHtml += '</td></tr>';
+
+        signatureHtml += '</table>';
+
+        document.getElementById('signaturePreview').innerHTML = signatureHtml;
+    }
+
+    function copyFormattedSignature() {
+        const signature = document.getElementById('signaturePreview');
+        const range = document.createRange();
+        range.selectNodeContents(signature);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        try {
+            document.execCommand('copy');
+            alert('Signature copied to clipboard!');
+        } catch (err) {
+            alert('Unable to copy signature. Please select and copy manually.');
+        }
+
+        selection.removeAllRanges();
+    }
+
+    // Initialize preview on page load
+    updatePreview();
+</script>
+
+</body>
+</html>
